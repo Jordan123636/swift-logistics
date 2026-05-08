@@ -46,7 +46,7 @@ function handleQuote() {
       document.getElementById(id).value = '';
     });
     document.getElementById('serviceType').value = '';
-  }
+  
  
   // Tracking handler
   function handleTrack() {
