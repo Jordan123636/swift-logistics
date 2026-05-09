@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Firebase SDKs -->
+<script type="module" src="firebase-init.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Swift Logistics – Sign In</title>
@@ -44,7 +46,7 @@
         </div>
         <h2 class="success-title" id="successTitle">Account Created!</h2>
         <p class="success-sub" id="successSub">Your account is ready. You can now submit quote requests and track your shipments.</p>
-        <a href="quote.html" class="btn-continue">Continue to Get a Quote →</a>
+        <a href="nexlog.html" class="btn-continue">Continue to Get a Quote →</a>
       </div>
  
       <!-- LOGIN PANEL -->
@@ -174,7 +176,10 @@
     </div>
   </div>
 </div>
-
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase-init.js"></script>
 <script src="code.js"></script>
 </body>
 </html>

@@ -441,6 +441,8 @@
       transform: translateY(120px); opacity: 0;
       transition: transform 0.4s ease, opacity 0.4s ease;
       z-index: 9999;
+      max-width: 90vw;       
+      text-align: center;     
     }
     .toast.show { transform: translateY(0); opacity: 1; }
  
@@ -763,4 +765,19 @@
       .stats-row { flex-wrap: wrap; gap: 24px; }
       footer { padding: 50px 24px 24px; }
       .footer-top { grid-template-columns: 1fr; gap: 30px; }
+    }
+    /* ── AUTH PAGE RESPONSIVE ── */
+    @media (max-width: 520px) {
+      .page {
+        align-items: flex-start;
+        padding: 80px 12px 40px;
+      }
+      .auth-card {
+        border-radius: 12px;
+        margin-top: 12px;
+      }
+      .card-body { padding: 24px 20px; }
+      .field-row { grid-template-columns: 1fr; }
+      .tabs { margin-bottom: 24px; }
+      .form-title { font-size: 1.5rem; }
     }
