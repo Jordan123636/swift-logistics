@@ -333,7 +333,7 @@
     .about-body { font-size: 0.92rem; color: #4a5568; line-height: 1.8; margin-bottom: 16px; }
  
     .stats-row { display: flex; gap: 40px; margin-top: 40px; padding-top: 40px; border-top: 2px solid var(--gray-mid); }
-    .stat-item {}
+    
     .stat-number {
       font-family: 'Barlow Condensed', sans-serif;
       font-weight: 900; font-size: 2.4rem;

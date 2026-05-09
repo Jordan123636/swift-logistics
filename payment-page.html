@@ -928,7 +928,6 @@ async function handlePay() {
   const num = document.getElementById('cardNumber').value.replace(/\D/g,'');
   const name = document.getElementById('cardName').value.trim();
 
-  // Lenient validation — just check fields are not empty
   if (!num || !name) {
     const btn = document.querySelector('.pay-btn');
     btn.style.animation = 'shake 0.4s ease';
@@ -938,18 +937,15 @@ async function handlePay() {
     return;
   }
 
-  // Show processing state
   const btn = document.querySelector('.pay-btn');
   btn.innerHTML = 'Processing...';
   btn.disabled = true;
   btn.style.opacity = '0.7';
 
   try {
-    // Get quote data from sessionStorage
     const saved = sessionStorage.getItem('pendingQuote');
     const quoteData = saved ? JSON.parse(saved) : {};
 
-    // Attach the logged-in user
     const user = firebase.auth().currentUser;
     if (user) {
       quoteData.userId = user.uid;
@@ -959,18 +955,11 @@ async function handlePay() {
     quoteData.status = 'paid';
     quoteData.paidAt = new Date().toISOString();
 
-    // Save quote to Firestore
     await firebase.firestore().collection('quotes').add(quoteData);
 
-    // Show tracking ID on success screen
     const trackingId = quoteData.trackingId || 'N/A';
-    document.querySelector('.success-ref').innerHTML =
-      'Tracking ID: <span>' + trackingId + '</span>';
-
-    // Clear sessionStorage
+    document.querySelector('.success-ref').innerHTML = 'Tracking ID: <span>' + trackingId + '</span>';
     sessionStorage.removeItem('pendingQuote');
-
-    // Show success overlay
     document.getElementById('successOverlay').classList.add('show');
 
   } catch (err) {

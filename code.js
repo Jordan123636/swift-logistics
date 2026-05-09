@@ -24,9 +24,7 @@ auth.onAuthStateChanged(user => {
     btn.href = '#';
     btn.onclick = (e) => {
       e.preventDefault();
-      auth.signOut().then(() => {
-        window.location.reload();
-      });
+      auth.signOut().then(() => window.location.reload());
     };
   } else {
     btn.textContent = 'Login';
@@ -56,10 +54,10 @@ window.addEventListener('load', () => {
     const el = document.getElementById(id);
     if (el && data[id]) el.value = data[id];
   });
+
   const serviceEl = document.getElementById('serviceType');
   if (serviceEl && data.serviceType) serviceEl.value = data.serviceType;
 
-  // Scroll to quote form
   const contactSection = document.getElementById('contact');
   if (contactSection) {
     setTimeout(() => contactSection.scrollIntoView({ behavior: 'smooth' }), 400);
@@ -94,16 +92,13 @@ async function handleQuote() {
     status: 'pending'
   };
 
-  // Save quote data for payment page
+  // Save for payment page
   sessionStorage.setItem('pendingQuote', JSON.stringify(quoteData));
 
   const user = auth.currentUser;
-
   if (user) {
-    // Logged in — go straight to payment
     window.location.href = 'payment-page.html';
   } else {
-    // Not logged in — go to auth first
     window.location.href = 'auth.html';
   }
 }
@@ -112,8 +107,14 @@ async function handleQuote() {
 // ── TRACKING HANDLER ──
 function handleTrack() {
   const val = document.getElementById('trackingInput').value.trim();
-  if (!val) { alert('Please enter a tracking number.'); return; }
-  alert(`Tracking "${val}" — Firebase integration coming soon!`);
+
+  if (!val) {
+    alert('Please enter a tracking number.');
+    return;
+  }
+
+  // Redirect to order tracking page with the ID as a URL parameter
+  window.location.href = 'order-tracking.html?id=' + encodeURIComponent(val);
 }
 
 
@@ -214,7 +215,6 @@ async function handleLogin() {
   try {
     await auth.signInWithEmailAndPassword(email, password);
 
-    // If there's a pending quote go to payment, otherwise show success
     const pending = sessionStorage.getItem('pendingQuote');
     if (pending) {
       window.location.href = 'payment-page.html';
@@ -258,7 +258,6 @@ async function handleSignup() {
       createdAt: new Date().toISOString()
     });
 
-    // If there's a pending quote go to payment, otherwise show success
     const pending = sessionStorage.getItem('pendingQuote');
     if (pending) {
       window.location.href = 'payment-page.html';
