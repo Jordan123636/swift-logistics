@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Orders — Swift Logistics</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green:      #8DC63F;
+  --green-dark: #6fa52e;
+  --green-light:#eef7de;
+  --navy:       #0d1b2e;
+  --navy-mid:   #112240;
+  --white:      #ffffff;
+  --border:     rgba(255,255,255,0.08);
+  --muted:      rgba(255,255,255,0.45);
+  --font:       'Barlow', sans-serif;
+  --font-cond:  'Barlow Condensed', sans-serif;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--navy);
+  color: var(--white);
+  min-height: 100vh;
+}
+
+/* ── NAV ── */
+nav {
+  background: rgba(13,27,46,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.nav-logo {
+  width: 36px; height: 36px;
+  background: var(--green);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-logo svg { width: 20px; height: 20px; fill: var(--navy); }
+
+.nav-brand-name {
+  font-family: var(--font-cond);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: 0.02em;
+}
+
+.nav-right { display: flex; align-items: center; gap: 12px; }
+
+.nav-back {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-back:hover { color: var(--green); }
+
+.btn-track-shipment {
+  background: var(--green);
+  color: var(--navy);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 9px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.2s;
+  letter-spacing: 0.02em;
+}
+.btn-track-shipment:hover { background: var(--green-dark); }
+
+/* ── PAGE HEADER ── */
+.page-header {
+  background: linear-gradient(135deg, var(--navy-mid) 0%, var(--navy) 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 3rem 2rem 2.5rem;
+  text-align: center;
+}
+
+.page-header-label {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 10px;
+}
+
+.page-header h1 {
+  font-family: var(--font-cond);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: 0.02em;
+}
+
+.page-header p {
+  font-size: 0.95rem;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+/* ── MAIN ── */
+.main {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 5rem;
+}
+
+/* ── STATE SCREENS ── */
+.state-screen {
+  text-align: center;
+  padding: 5rem 2rem;
+}
+
+.state-icon { font-size: 3rem; margin-bottom: 1rem; }
+
+.state-title {
+  font-family: var(--font-cond);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.state-sub {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-top: 8px;
+  line-height: 1.6;
+}
+
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── ORDER COUNT ── */
+.orders-count {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.orders-count span { color: var(--green); font-weight: 600; }
+
+/* ── ACCORDION ── */
+.order-item {
+  background: var(--navy-mid);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.order-item:hover { border-color: rgba(141,198,63,0.3); }
+.order-item.open  { border-color: rgba(141,198,63,0.5); }
+
+.order-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.4rem;
+  cursor: pointer;
+  user-select: none;
+  gap: 1rem;
+}
+
+.order-header-left { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+
+.order-tracking-id {
+  font-family: var(--font-cond);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.04em;
+}
+
+.order-keyword {
+  font-size: 0.8rem;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 400px;
+}
+
+.order-header-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+
+.order-status-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.badge-paid     { background: rgba(141,198,63,0.15); color: var(--green); }
+.badge-pending  { background: rgba(251,191,36,0.15); color: #fbbf24; }
+.badge-delivered{ background: rgba(74,222,128,0.15); color: #4ade80; }
+
+.chevron {
+  width: 20px; height: 20px;
+  fill: var(--muted);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.order-item.open .chevron { transform: rotate(180deg); }
+
+/* ── DROPDOWN BODY ── */
+.order-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+
+.order-item.open .order-body { max-height: 600px; }
+
+.order-details {
+  border-top: 1px solid var(--border);
+  padding: 1.25rem 1.4rem 1.5rem;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (max-width: 520px) { .details-grid { grid-template-columns: 1fr; } }
+
+.detail-item label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 3px;
+}
+
+.detail-item span {
+  font-size: 0.875rem;
+  color: var(--white);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.detail-item.full { grid-column: 1 / -1; }
+
+.detail-item .tracking-val {
+  font-family: var(--font-cond);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--green);
+}
+
+.order-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-track-order {
+  background: var(--green);
+  color: var(--navy);
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 9px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.2s;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-track-order:hover { background: var(--green-dark); }
+
+/* ── LOGIN PROMPT ── */
+.login-prompt {
+  display: inline-block;
+  margin-top: 1.5rem;
+  background: var(--green);
+  color: var(--navy);
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 12px 28px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.login-prompt:hover { background: var(--green-dark); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="nexlog.html" class="nav-brand">
+    <div class="nav-logo">
+      <svg viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/></svg>
+    </div>
+    <span class="nav-brand-name">Swift Logistics</span>
+  </a>
+  <div class="nav-right">
+    <a href="nexlog.html" class="nav-back">← Home</a>
+    <a href="nexlog.html#tracking" class="btn-track-shipment">Track Shipment</a>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <span class="page-header-label">Account</span>
+  <h1>My Orders</h1>
+  <p id="headerSub">Loading your orders...</p>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="main">
+  <div class="state-screen">
+    <div class="spinner"></div>
+    <div class="state-title">Loading your orders</div>
+    <div class="state-sub">Fetching your shipment history from our servers...</div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase-init.js"></script>
+
+<script>
+
+// ── STATUS STAGES (same as order-tracking.html) ──
+const STAGES = [
+  { key: 'confirmed',        label: 'Order Confirmed',   hoursMin: 0  },
+  { key: 'picked_up',        label: 'Picked Up',          hoursMin: 2  },
+  { key: 'in_transit',       label: 'In Transit',         hoursMin: 8  },
+  { key: 'out_for_delivery', label: 'Out for Delivery',   hoursMin: 48 },
+  { key: 'delivered',        label: 'Delivered',          hoursMin: 96 }
+];
+
+function getCurrentStageLabel(paidAt) {
+  const hoursElapsed = (new Date() - new Date(paidAt)) / (1000 * 60 * 60);
+  let stage = STAGES[0];
+  for (const s of STAGES) {
+    if (hoursElapsed >= s.hoursMin) stage = s;
+  }
+  return stage.label;
+}
+
+function formatDate(iso) {
+  return new Date(iso).toLocaleDateString('en-NG', {
+    day: '2-digit', month: 'short', year: 'numeric'
+  });
+}
+
+// Extract a short keyword from shipment details
+function getKeyword(details) {
+  if (!details) return 'No details provided';
+  const words = details.trim().split(/\s+/);
+  return words.slice(0, 6).join(' ') + (words.length > 6 ? '...' : '');
+}
+
+function getBadgeClass(order) {
+  const label = getCurrentStageLabel(order.paidAt || order.submittedAt);
+  if (label === 'Delivered') return 'badge-delivered';
+  if (order.status === 'paid') return 'badge-paid';
+  return 'badge-pending';
+}
+
+// ── BUILD ORDER CARD ──
+function buildOrderCard(order, index) {
+  const paidAt = order.paidAt || order.submittedAt;
+  const stageLabel = getCurrentStageLabel(paidAt);
+  const keyword = getKeyword(order.details);
+  const badgeClass = getBadgeClass(order);
+
+  return `
+    <div class="order-item" id="order-${index}">
+      <div class="order-header" onclick="toggleOrder(${index})">
+        <div class="order-header-left">
+          <div class="order-tracking-id">${order.trackingId || 'N/A'}</div>
+          <div class="order-keyword">${keyword}</div>
+        </div>
+        <div class="order-header-right">
+          <span class="order-status-badge ${badgeClass}">${stageLabel}</span>
+          <svg class="chevron" viewBox="0 0 24 24">
+            <path d="M7 10l5 5 5-5z"/>
+          </svg>
+        </div>
+      </div>
+      <div class="order-body">
+        <div class="order-details">
+          <div class="details-grid">
+
+            <div class="detail-item">
+              <label>Tracking ID</label>
+              <span class="tracking-val">${order.trackingId || '—'}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Date Placed</label>
+              <span>${formatDate(paidAt)}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Origin</label>
+              <span>${order.origin || '—'}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Destination</label>
+              <span>${order.destination || '—'}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Service Type</label>
+              <span>${order.serviceType || '—'}</span>
+            </div>
+
+            <div class="detail-item">
+              <label>Current Status</label>
+              <span>${stageLabel}</span>
+            </div>
+
+            <div class="detail-item full">
+              <label>Shipment Details</label>
+              <span>${order.details || 'No additional details provided.'}</span>
+            </div>
+
+          </div>
+          <div class="order-actions">
+            <a href="order-tracking.html?id=${encodeURIComponent(order.trackingId)}" class="btn-track-order">
+              Track This Order →
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── TOGGLE ACCORDION ──
+function toggleOrder(index) {
+  const item = document.getElementById('order-' + index);
+  item.classList.toggle('open');
+}
+
+// ── MAIN: Wait for auth then fetch orders ──
+auth.onAuthStateChanged(async user => {
+  const main = document.getElementById('main');
+  const headerSub = document.getElementById('headerSub');
+
+  if (!user) {
+    // Not logged in
+    headerSub.textContent = 'Please sign in to view your orders.';
+    main.innerHTML = `
+      <div class="state-screen">
+        <div class="state-icon">🔒</div>
+        <div class="state-title">Sign in to view your orders</div>
+        <div class="state-sub">Your order history is tied to your account.<br>Please sign in to continue.</div>
+        <a href="auth.html" class="login-prompt">Sign In →</a>
+      </div>`;
+    return;
+  }
+
+  // Fetch orders belonging to this user
+  try {
+    const snapshot = await db.collection('quotes')
+      .where('userId', '==', user.uid)
+      .orderBy('submittedAt', 'desc')
+      .get();
+
+    if (snapshot.empty) {
+      headerSub.textContent = 'No orders found on this account.';
+      main.innerHTML = `
+        <div class="state-screen">
+          <div class="state-icon">📦</div>
+          <div class="state-title">No orders yet</div>
+          <div class="state-sub">You haven't placed any orders yet.<br>Get a quote to get started.</div>
+          <a href="nexlog.html#contact" class="login-prompt">Get a Quote →</a>
+        </div>`;
+      return;
+    }
+
+    const orders = snapshot.docs.map(d => d.data());
+    headerSub.textContent = `Showing ${orders.length} order${orders.length > 1 ? 's' : ''} on your account.`;
+
+    let html = `<div class="orders-count">You have <span>${orders.length}</span> order${orders.length > 1 ? 's' : ''}</div>`;
+    orders.forEach((order, i) => {
+      html += buildOrderCard(order, i);
+    });
+
+    main.innerHTML = html;
+
+  } catch (err) {
+    console.error('Error fetching orders:', err);
+    headerSub.textContent = 'Something went wrong.';
+    main.innerHTML = `
+      <div class="state-screen">
+        <div class="state-icon">⚠️</div>
+        <div class="state-title">Could not load orders</div>
+        <div class="state-sub">There was a problem connecting to our servers.<br>Please try refreshing the page.</div>
+      </div>`;
+  }
+});
+
+</script>
+</body>
+</html>

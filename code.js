@@ -14,22 +14,39 @@ window.addEventListener('scroll', () => {
 });
 
 
-// ── AUTH STATE: Update Login/Logout button in navbar ──
+// ── AUTH STATE: Update navbar buttons ──
 auth.onAuthStateChanged(user => {
-  const btn = document.getElementById('navAuthBtn');
-  if (!btn) return;
+  const authBtn   = document.getElementById('navAuthBtn');
+  const secondBtn = document.getElementById('navSecondBtn');
+
+  if (!authBtn) return;
 
   if (user) {
-    btn.textContent = 'Logout';
-    btn.href = '#';
-    btn.onclick = (e) => {
+    // Logged in: Login → Logout, Get a Quote → My Orders
+    authBtn.textContent = 'Logout';
+    authBtn.href = '#';
+    authBtn.onclick = (e) => {
       e.preventDefault();
       auth.signOut().then(() => window.location.reload());
     };
+
+    if (secondBtn) {
+      secondBtn.textContent = 'My Orders';
+      secondBtn.href = 'orders.html';
+      secondBtn.onclick = null;
+    }
+
   } else {
-    btn.textContent = 'Login';
-    btn.href = 'auth.html';
-    btn.onclick = null;
+    // Logged out: show Login + Get a Quote
+    authBtn.textContent = 'Login';
+    authBtn.href = 'auth.html';
+    authBtn.onclick = null;
+
+    if (secondBtn) {
+      secondBtn.textContent = 'Get a Quote';
+      secondBtn.href = '#contact';
+      secondBtn.onclick = null;
+    }
   }
 });
 
@@ -92,7 +109,6 @@ async function handleQuote() {
     status: 'pending'
   };
 
-  // Save for payment page
   sessionStorage.setItem('pendingQuote', JSON.stringify(quoteData));
 
   const user = auth.currentUser;
@@ -107,13 +123,7 @@ async function handleQuote() {
 // ── TRACKING HANDLER ──
 function handleTrack() {
   const val = document.getElementById('trackingInput').value.trim();
-
-  if (!val) {
-    alert('Please enter a tracking number.');
-    return;
-  }
-
-  // Redirect to order tracking page with the ID as a URL parameter
+  if (!val) { alert('Please enter a tracking number.'); return; }
   window.location.href = 'order-tracking.html?id=' + encodeURIComponent(val);
 }
 
@@ -214,7 +224,6 @@ async function handleLogin() {
 
   try {
     await auth.signInWithEmailAndPassword(email, password);
-
     const pending = sessionStorage.getItem('pendingQuote');
     if (pending) {
       window.location.href = 'payment-page.html';
@@ -250,7 +259,6 @@ async function handleSignup() {
 
   try {
     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-
     await db.collection('users').doc(userCredential.user.uid).set({
       firstName: firstName,
       lastName: lastName,
