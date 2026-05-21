@@ -398,7 +398,7 @@ function formatDate(iso) {
 }
 
 // Extract a short keyword from shipment details
-function getKeyword(details) {
+function getKeyword(details) {SWL-UQ7772501677
   if (!details) return 'No details provided';
   const words = details.trim().split(/\s+/);
   return words.slice(0, 6).join(' ') + (words.length > 6 ? '...' : '');

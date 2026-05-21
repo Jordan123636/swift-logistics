@@ -1,5 +1,4 @@
-// PASTE YOUR FIREBASE CONFIG HERE
-// Get this from: Firebase Console → Project Settings → Your Apps
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyBEHJh6V1aDjt3cRHG6Jki-7AjsYRI0ypw",
